@@ -1,5 +1,7 @@
+#!/usr/bin/env python
+
 # Simple demo of of the WS2801/SPI-like addressable RGB LED lights.
-import time
+import time, sys
 import RPi.GPIO as GPIO
  
 # Import the WS2801 module.
@@ -94,8 +96,14 @@ def appear_from_back(pixels, color=(255, 0, 0)):
             pixels.show()
             time.sleep(0.02)
             
- 
-if __name__ == "__main__":
+def set_color(pixels, color=(255,0,0)):
+    # fill all pixels with one color
+    pixels.clear()
+    for k in range(pixels.count()):
+        pixels.set_pixel(k, Adafruit_WS2801.RGB_to_color( color[0], color[1], color[2] ))
+    pixels.show()
+
+def do_demo():
     # Clear all the pixels to turn them off.
     pixels.clear()
     pixels.show()  # Make sure to call show() after changing any pixels!
@@ -112,9 +120,16 @@ if __name__ == "__main__":
         blink_color(pixels, blink_times = 1, color=(0, 255, 0))
         blink_color(pixels, blink_times = 1, color=(0, 0, 255))
  
-    
-    
     rainbow_colors(pixels)
     
-    # brightness_decrease(pixels)
-    
+    brightness_decrease(pixels)
+ 
+if __name__ == "__main__":
+    if len(sys.argv) != 4:
+        print "Invalid args.  usage: octoled.py <rcolor> <gcolor> <bcolor>"
+        sys.exit(1)
+    else:
+        color = (int(sys.argv[1]), int(sys.argv[2]), int(sys.argv[3]))
+	print "Setting octoled colors: (%d, %d, %d)" % color
+        set_color(pixels, color)
+        sys.exit(0)
